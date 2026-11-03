@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LangGraph Mini Dash</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/cytoscape@3.33.1/dist/cytoscape.min.js"></script>
+    <script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+    <script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
+    <link rel="stylesheet" href="/web/style.css">
+</head>
+<body>
+    <header id="top-header">
+        <div class="header-left">
+            <div class="logo-icon">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor"/>
+                    <rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.6"/>
+                    <rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity="0.6"/>
+                    <rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor"/>
+                </svg>
+            </div>
+            <h1>LangGraph Mini Dash</h1>
+        </div>
+        <div class="header-right">
+            <button id="theme-toggle" class="header-theme-btn" title="Toggle theme">
+                <svg id="icon-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+                <svg id="icon-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+                    <circle cx="12" cy="12" r="5"/>
+                    <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+            </button>
+            <span class="status-indicator"><span class="dot"></span>Connected</span>
+            <button id="run-btn" class="header-run-btn">
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><polygon points="2,1 11,6 2,11"/></svg>
+                Run
+            </button>
+        </div>
+    </header>
+
+    <div id="main-layout">
+        <nav id="icon-sidebar">
+            <button class="nav-icon active" id="nav-graph" title="Graph">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+            </button>
+            <button class="nav-icon" id="nav-runs" title="Runs">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+            </button>
+            <button class="nav-icon" id="nav-settings" title="Settings">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
+        </nav>
+
+        <aside id="nodes-sidebar">
+            <div class="sidebar-header">
+                <h3 id="sidebar-title">Nodes</h3>
+                <button class="filter-btn" id="toggle-filter-btn" title="Filter / Search">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div id="search-container" style="display: none; padding: 8px 12px; border-bottom: 1px solid var(--border-color); background: var(--bg-card);">
+                <input type="text" id="node-search-input" placeholder="Search node..." style="width: 100%; background: var(--bg-item); border: 1px solid var(--border-color); color: var(--text-main); padding: 5px 8px; border-radius: 4px; font-size: 12px; outline: none;">
+            </div>
+            <div id="sidebar-content" class="sidebar-pane">
+                <div id="nodes-list"></div>
+            </div>
+        </aside>
+
+        <main id="center-area">
+            <div class="tabs-bar">
+                <button class="tab-btn active" id="tab-graph">Workflow Graph</button>
+                <button class="tab-btn" id="tab-flow">Execution Flow</button>
+            </div>
+            <div id="cy-container">
+                <div id="cy"></div>
+                <div id="cy-tooltip" class="cy-tooltip"></div>
+                <div class="graph-controls">
+                    <button id="zoom-in" title="Zoom in">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <button id="zoom-out" title="Zoom out">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <line x1="5" y1="12" x2="19" y2="12"/>
+                        </svg>
+                    </button>
+                    <button id="zoom-fit" title="Fit to screen">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="flow-container" style="display:none;">
+                <div class="flow-header"><h4>Execution Timeline</h4></div>
+                <div id="flow-timeline">
+                    <div class="flow-empty">Run the agent to see execution sequence.</div>
+                </div>
+            </div>
+        </main>
+
+        <aside id="right-sidebar">
+            <div class="card run-info-card">
+                <h4>Run Info</h4>
+                <div class="info-row"><span>Run ID</span><span class="val" id="info-run-id">—</span></div>
+                <div class="info-row"><span>Status</span><span class="val" id="info-status">—</span></div>
+                <div class="info-row"><span>Started</span><span class="val" id="info-started">—</span></div>
+                <div class="info-row"><span>Duration</span><span class="val" id="info-duration">00:00:00</span></div>
+            </div>
+
+            <div class="card node-detail-card" id="node-detail-card">
+                <h4>Node Details</h4>
+                <div id="node-detail-empty" class="node-detail-empty">Click a node to inspect</div>
+                <div id="node-detail-content" style="display:none;">
+                    <div class="info-row"><span>ID</span><span class="val" id="detail-id">—</span></div>
+                    <div class="info-row"><span>Status</span><span class="val" id="detail-status">—</span></div>
+                    <div class="detail-output-label">Output</div>
+                    <div id="detail-output" class="detail-output">—</div>
+                </div>
+            </div>
+
+            <div class="card logs-card">
+                <div class="logs-header">
+                    <h4>Execution Logs</h4>
+                    <button id="clear-logs">Clear</button>
+                </div>
+                <div id="console">Starting workflow...</div>
+            </div>
+
+            <div class="card status-card">
+                <h4>Status</h4>
+                <div class="status-content">
+                    <div class="status-badge" id="status-badge-icon">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="status-text">
+                        <strong id="status-title">Idle</strong>
+                        <span id="status-subtitle">Ready to run</span>
+                    </div>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+            </div>
+        </aside>
+    </div>
+
+    <footer id="bottom-footer">
+        <div class="footer-left">LangGraph Mini Dash v1.0.0</div>
+        <div class="footer-right">Python 3.14.0 · LangGraph 0.3.0</div>
+    </footer>
+
+    <script src="/web/app.js"></script>
+</body>
+</html>
