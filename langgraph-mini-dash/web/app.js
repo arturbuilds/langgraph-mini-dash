@@ -652,8 +652,6 @@ function showGraphInputForm(schema) {
             input.addEventListener('focus', () => { input.style.borderColor = 'var(--accent, #4f7dff)'; });
             input.addEventListener('blur', () => { input.style.borderColor = 'var(--border-color, #26262e)'; });
 
-            // Убираем жесткую обязательность (input.required = true), чтобы форма не ругалась на пустые поля
-
             if (fieldSchema.description) {
                 const hint = document.createElement('small');
                 hint.textContent = fieldSchema.description;
