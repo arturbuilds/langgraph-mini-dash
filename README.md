@@ -192,6 +192,6 @@ See the [LICENSE](./LICENSE) file for license information.
 
 ## Author
 
-Created by **Artur**.
+Created by **wiffy**.
 
 GitHub: [@arturbuilds](https://github.com/arturbuilds)
