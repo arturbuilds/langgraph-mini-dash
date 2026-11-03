@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "langgraph-mini-dash"
+version = "1.0.3"
+description = "A visual debugging dashboard and UI for LangGraph multi-agent workflows"
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [
+   { name="wiffy", email="melnikarthur280912@gmail.com" },
+]
+license = { text = "MIT" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+requires-python = ">=3.9"
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "langgraph",
+    "pydantic"
+]
+
+[tool.setuptools.packages.find]
+include = ["langgraph_mini_dash*"]
+
+[tool.setuptools.package-data]
+langgraph_mini_dash = ["web/**/*", "web/*"]
